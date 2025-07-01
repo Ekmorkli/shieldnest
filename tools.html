@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Free cybersecurity tools and resources from ShieldNest - Password generators, security scanners, and compliance checkers">
+  <title>Cybersecurity Tools | ShieldNest</title>
+  <link rel="stylesheet" href="CSS/style.css" />
+  <link rel="stylesheet" href="CSS/chat.css" />
+  <link rel="stylesheet" href="CSS/whatsapp-integration.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+  <style>
+    body {
+      opacity: 0;
+      animation: fadeIn 0.6s ease-in-out forwards;
+    }
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="navbar">
+      <div class="logo">🛡️ ShieldNest</div>
+      <button class="mobile-menu-btn" aria-label="Toggle mobile menu" aria-expanded="false">☰</button>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="services.html">Services</a></li>
+        <li><a href="pricing.html">Pricing</a></li>
+        <li><a href="tools.html">Tools</a></li>
+        <li><a href="compliance-checker.html">Compliance</a></li>
+        <li><a href="incident-response.html">Emergency</a></li>
+        <li><a href="blog.html">Blog</a></li>
+        <li><a href="index.html#contact">Contact</a></li>
+        <li><a href="https://wa.me/233539985980" target="_blank">WhatsApp Us</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section class="hero" style="padding: 4rem 2rem; background: linear-gradient(135deg, rgba(59, 130, 246, 0.85) 0%, rgba(29, 78, 216, 0.9) 50%, rgba(14, 165, 233, 0.85) 100%), url('https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;">
+    <h1>🛠️ Cybersecurity Tools & Resources</h1>
+    <p>Free tools and resources to help you assess and improve your cybersecurity posture.</p>
+  </section>
+
+  <!-- Tools Section -->
+  <section id="tools" class="section tools-section">
+    <div class="services-grid">
+      <div class="tool-card">
+        <div style="font-size: 3rem; margin-bottom: 1rem; text-align: center;">📋</div>
+        <h3>Compliance Checker</h3>
+        <p>Assess your business compliance with Ghana's Data Protection Act and international cybersecurity standards.</p>
+        <a href="compliance-checker.html" class="btn-primary" style="display: inline-block; margin-top: 1rem;">Check Compliance</a>
+      </div>
+
+      <div class="tool-card">
+        <div style="font-size: 3rem; margin-bottom: 1rem; text-align: center;">🚨</div>
+        <h3>Emergency Response Guide</h3>
+        <p>Step-by-step incident response procedures for common cybersecurity emergencies and data breaches.</p>
+        <a href="incident-response.html" class="btn-primary" style="display: inline-block; margin-top: 1rem;">Emergency Help</a>
+      </div>
+
+      <div class="tool-card">
+        <div style="font-size: 3rem; margin-bottom: 1rem; text-align: center;">🔐</div>
+        <h3>Password Generator</h3>
+        <p>Generate strong, secure passwords with customizable length and character requirements.</p>
+        <div style="margin-top: 1rem;">
+          <label for="password-length">Password Length: <span id="length-display">12</span></label>
+          <input type="range" id="password-length" min="8" max="50" value="12" style="width: 100%; margin: 0.5rem 0;">
+
+          <label style="display: block; margin: 0.5rem 0;">
+            <input type="checkbox" id="include-uppercase" checked> Include Uppercase Letters
+          </label>
+          <label style="display: block; margin: 0.5rem 0;">
+            <input type="checkbox" id="include-lowercase" checked> Include Lowercase Letters
+          </label>
+          <label style="display: block; margin: 0.5rem 0;">
+            <input type="checkbox" id="include-numbers" checked> Include Numbers
+          </label>
+          <label style="display: block; margin: 0.5rem 0;">
+            <input type="checkbox" id="include-symbols" checked> Include Symbols
+          </label>
+
+          <button onclick="generatePassword()" class="btn-primary" style="width: 100%; margin-top: 1rem;">Generate Password</button>
+          <input type="text" id="generated-password" readonly style="margin-top: 1rem;" placeholder="Generated password will appear here">
+          <button onclick="copyPassword()" class="btn-primary" style="width: 100%; margin-top: 0.5rem;">Copy Password</button>
+          <div id="copy-status" style="margin-top: 0.5rem; color: #22c55e;"></div>
+        </div>
+      </div>
+
+      <div class="tool-card">
+        <div style="font-size: 3rem; margin-bottom: 1rem; text-align: center;">📊</div>
+        <h3>Security Assessment Quiz</h3>
+        <p>Quick 10-question assessment to evaluate your current cybersecurity knowledge and practices.</p>
+        <div id="quiz-container" style="margin-top: 1rem;">
+          <div id="quiz-question" style="margin-bottom: 1rem; font-weight: bold;">Click Start Quiz to begin</div>
+          <div id="quiz-options" style="margin-bottom: 1rem;"></div>
+          <button onclick="startQuiz()" id="quiz-start-btn" class="btn-primary" style="width: 100%;">Start Quiz</button>
+          <div id="quiz-progress" style="margin-top: 1rem; text-align: center;"></div>
+          <div id="quiz-results" style="margin-top: 1rem; display: none;"></div>
+        </div>
+      </div>
+
+      <div class="tool-card">
+        <div style="font-size: 3rem; margin-bottom: 1rem; text-align: center;">✅</div>
+        <h3>Security Checklist</h3>
+        <p>Comprehensive checklist to ensure your systems meet basic cybersecurity requirements.</p>
+        <div id="security-checklist" style="margin-top: 1rem;">
+          <form id="checklistForm">
+            <label style="display: block; margin: 1rem 0; padding: 1rem; background: rgba(248, 250, 252, 0.8); border-radius: 10px; cursor: pointer;">
+              <input type="checkbox" name="checklist" value="firewall"> Firewall enabled and properly configured
+            </label>
+            <label style="display: block; margin: 1rem 0; padding: 1rem; background: rgba(248, 250, 252, 0.8); border-radius: 10px; cursor: pointer;">
+              <input type="checkbox" name="checklist" value="antivirus"> Antivirus software installed and updated
+            </label>
+            <label style="display: block; margin: 1rem 0; padding: 1rem; background: rgba(248, 250, 252, 0.8); border-radius: 10px; cursor: pointer;">
+              <input type="checkbox" name="checklist" value="updates"> Operating system and software regularly updated
+            </label>
+            <label style="display: block; margin: 1rem 0; padding: 1rem; background: rgba(248, 250, 252, 0.8); border-radius: 10px; cursor: pointer;">
+              <input type="checkbox" name="checklist" value="backup"> Regular data backups performed and tested
+            </label>
+            <label style="display: block; margin: 1rem 0; padding: 1rem; background: rgba(248, 250, 252, 0.8); border-radius: 10px; cursor: pointer;">
+              <input type="checkbox" name="checklist" value="passwords"> Strong password policy implemented
+            </label>
+            <label style="display: block; margin: 1rem 0; padding: 1rem; background: rgba(248, 250, 252, 0.8); border-radius: 10px; cursor: pointer;">
+              <input type="checkbox" name="checklist" value="mfa"> Multi-factor authentication enabled
+            </label>
+            <label style="display: block; margin: 1rem 0; padding: 1rem; background: rgba(248, 250, 252, 0.8); border-radius: 10px; cursor: pointer;">
+              <input type="checkbox" name="checklist" value="training"> Employee cybersecurity training provided
+            </label>
+            <label style="display: block; margin: 1rem 0; padding: 1rem; background: rgba(248, 250, 252, 0.8); border-radius: 10px; cursor: pointer;">
+              <input type="checkbox" name="checklist" value="incident"> Incident response plan documented
+            </label>
+            <button type="button" onclick="evaluateChecklist()" class="btn-primary" style="width: 100%; margin-top: 1rem;">Evaluate Security Level</button>
+          </form>
+          <div id="checklist-results" style="margin-top: 1rem; display: none;"></div>
+        </div>
+      </div>
+
+      <div class="tool-card">
+        <div style="font-size: 3rem; margin-bottom: 1rem; text-align: center;">🌐</div>
+        <h3>Network Security Tips</h3>
+        <p>Essential tips and best practices for securing your home or business network.</p>
+        <div style="margin-top: 1rem; text-align: left;">
+          <ul style="list-style-type: none; padding: 0;">
+            <li style="margin: 0.5rem 0; padding: 0.5rem; background: rgba(248, 250, 252, 0.8); border-radius: 8px;">🔒 Use WPA3 encryption for Wi-Fi</li>
+            <li style="margin: 0.5rem 0; padding: 0.5rem; background: rgba(248, 250, 252, 0.8); border-radius: 8px;">📶 Change default router passwords</li>
+            <li style="margin: 0.5rem 0; padding: 0.5rem; background: rgba(248, 250, 252, 0.8); border-radius: 8px;">🚫 Disable WPS (Wi-Fi Protected Setup)</li>
+            <li style="margin: 0.5rem 0; padding: 0.5rem; background: rgba(248, 250, 252, 0.8); border-radius: 8px;">🔄 Regular firmware updates</li>
+            <li style="margin: 0.5rem 0; padding: 0.5rem; background: rgba(248, 250, 252, 0.8); border-radius: 8px;">👤 Create guest network for visitors</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Call to Action -->
+  <section class="section" style="text-align: center; background: rgba(59, 130, 246, 0.05); border-radius: 25px; border: 1px solid rgba(59, 130, 246, 0.1);">
+    <h2 style="color: #3b82f6; margin-bottom: 2rem;">Need Professional Cybersecurity Help?</h2>
+    <p style="font-size: 1.2rem; color: #64748b; margin-bottom: 2rem;">
+      While these tools provide a good starting point, professional cybersecurity assessment and implementation ensure comprehensive protection.
+    </p>
+    <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+      <a href="services.html" class="btn-primary">View Our Services</a>
+      <a href="https://wa.me/233539985980" target="_blank" class="btn-primary">Get Professional Assessment</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <p>&copy; 2025 ShieldNest. All rights reserved. |
+      <a href="index.html">Home</a> |
+      <a href="about.html">About</a> |
+      <a href="services.html">Services</a> |
+      <a href="pricing.html">Pricing</a> |
+      <a href="tools.html">Tools</a> |
+      <a href="blog.html">Blog</a> |
+      <a href="privacy-policy.html">Privacy Policy</a>
+    </p>
+  </footer>
+
+  <script src="js/tools.js"></script>
+  <script src="js/chat.js"></script>
+  <script src="js/whatsapp-integration.js"></script>
+</body>
+</html>

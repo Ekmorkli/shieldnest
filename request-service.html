@@ -1,0 +1,570 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Service Request - ShieldNest</title>
+  <link rel="stylesheet" href="CSS/style.css" />
+  <style>
+    body {
+      opacity: 0;
+      animation: fadeIn 0.6s ease-in-out forwards;
+    }
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+      }
+    }
+
+    .form-container {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 3rem;
+      background: rgba(30, 41, 59, 0.8);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    .form-step {
+      display: none;
+    }
+
+    .form-step.active {
+      display: block;
+      animation: slideIn 0.5s ease-out;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .form-progress {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+    }
+
+    .progress-step {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: rgba(56, 189, 248, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #cbd5e1;
+      font-weight: bold;
+      transition: all 0.3s ease;
+    }
+
+    .progress-step.active {
+      background: #38bdf8;
+      color: #0f172a;
+    }
+
+    .progress-step.completed {
+      background: #22c55e;
+      color: white;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #facc15;
+      font-weight: bold;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 1rem;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.8);
+      color: #e2e8f0;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #38bdf8;
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.1);
+    }
+
+    .checkbox-group {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      padding: 1rem;
+      background: rgba(15, 23, 42, 0.5);
+      border-radius: 10px;
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .checkbox-item:hover {
+      background: rgba(56, 189, 248, 0.1);
+      border-color: #38bdf8;
+    }
+
+    .checkbox-item input[type="checkbox"] {
+      margin-right: 0.5rem;
+      width: auto;
+    }
+
+    .form-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 2rem;
+    }
+
+    .btn {
+      padding: 1rem 2rem;
+      border: none;
+      border-radius: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 1rem;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+      color: #0f172a;
+    }
+
+    .btn-secondary {
+      background: rgba(100, 116, 139, 0.5);
+      color: #e2e8f0;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(56, 189, 248, 0.3);
+    }
+
+    .urgency-indicator {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .urgency-option {
+      flex: 1;
+      padding: 1rem;
+      text-align: center;
+      border: 2px solid transparent;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .urgency-low {
+      background: rgba(34, 197, 94, 0.2);
+      border-color: rgba(34, 197, 94, 0.3);
+    }
+
+    .urgency-medium {
+      background: rgba(251, 191, 36, 0.2);
+      border-color: rgba(251, 191, 36, 0.3);
+    }
+
+    .urgency-high {
+      background: rgba(239, 68, 68, 0.2);
+      border-color: rgba(239, 68, 68, 0.3);
+    }
+
+    .urgency-option.selected {
+      border-width: 3px;
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="logo">🛡️ ShieldNest</div>
+    <button class="mobile-menu-btn" aria-label="Toggle mobile menu" aria-expanded="false">☰</button>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="services.html">Services</a></li>
+      <li><a href="pricing.html">Pricing</a></li>
+      <li><a href="tools.html">Tools</a></li>
+      <li><a href="compliance-checker.html">Compliance</a></li>
+      <li><a href="incident-response.html">Emergency</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+      <li><a href="https://wa.me/233539985980" target="_blank">WhatsApp Us</a></li>
+    </ul>
+  </nav>
+
+  <section class="section">
+    <h2>🛡️ Service Request Form</h2>
+    <p>Tell us about your cybersecurity and IT needs. We'll get back to you within 24 hours!</p>
+
+    <div class="form-container">
+      <div class="form-progress">
+        <div class="progress-step active" id="step-1">1</div>
+        <div class="progress-step" id="step-2">2</div>
+        <div class="progress-step" id="step-3">3</div>
+        <div class="progress-step" id="step-4">4</div>
+      </div>
+
+      <form id="serviceRequestForm" action="https://getform.io/f/bjjoqzkb" method="POST">
+        
+        <!-- Step 1: Contact Information -->
+        <div class="form-step active" id="form-step-1">
+          <h3>📞 Contact Information</h3>
+          
+          <div class="form-group">
+            <label for="fullName">Full Name *</label>
+            <input type="text" id="fullName" name="fullName" required>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email Address *</label>
+            <input type="email" id="email" name="email" required>
+          </div>
+
+          <div class="form-group">
+            <label for="phone">Phone Number *</label>
+            <input type="tel" id="phone" name="phone" required>
+          </div>
+
+          <div class="form-group">
+            <label for="company">Company/Organization</label>
+            <input type="text" id="company" name="company">
+          </div>
+
+          <div class="form-group">
+            <label for="location">Location (City/Region) *</label>
+            <select id="location" name="location" required>
+              <option value="">Select your location</option>
+              <option value="Accra">Greater Accra</option>
+              <option value="Kumasi">Ashanti (Kumasi)</option>
+              <option value="Tamale">Northern (Tamale)</option>
+              <option value="Cape Coast">Central (Cape Coast)</option>
+              <option value="Takoradi">Western (Takoradi)</option>
+              <option value="Ho">Volta (Ho)</option>
+              <option value="Koforidua">Eastern (Koforidua)</option>
+              <option value="Sunyani">Bono (Sunyani)</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Step 2: Service Selection -->
+        <div class="form-step" id="form-step-2">
+          <h3>🛡️ Services Needed</h3>
+          <p>Select all services you're interested in:</p>
+          
+          <div class="checkbox-group">
+            <label class="checkbox-item">
+              <input type="checkbox" name="services" value="Security Audit">
+              <span>🔍 Cybersecurity Audit</span>
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" name="services" value="Malware Removal">
+              <span>🦠 Malware Removal</span>
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" name="services" value="Firewall Setup">
+              <span>🔐 Firewall & Network Setup</span>
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" name="services" value="Security Training">
+              <span>🧑🏽‍🏫 Security Training</span>
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" name="services" value="Backup Recovery">
+              <span>💾 Backup & Recovery</span>
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" name="services" value="IT Support">
+              <span>⚙️ General IT Support</span>
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" name="services" value="Device Setup">
+              <span>💻 Device Setup & Optimization</span>
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" name="services" value="Other">
+              <span>➕ Other (specify below)</span>
+            </label>
+          </div>
+
+          <div class="form-group">
+            <label for="otherService">If "Other", please specify:</label>
+            <input type="text" id="otherService" name="otherService">
+          </div>
+        </div>
+
+        <!-- Step 3: Problem Details -->
+        <div class="form-step" id="form-step-3">
+          <h3>🔍 Problem Details</h3>
+          
+          <div class="form-group">
+            <label for="problemDescription">Describe your current situation/problem *</label>
+            <textarea id="problemDescription" name="problemDescription" rows="4" required 
+                      placeholder="e.g., My computer is running slowly, I think I have malware..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="deviceCount">Number of devices affected</label>
+            <select id="deviceCount" name="deviceCount">
+              <option value="1">1 device</option>
+              <option value="2-5">2-5 devices</option>
+              <option value="6-10">6-10 devices</option>
+              <option value="11-20">11-20 devices</option>
+              <option value="20+">More than 20 devices</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Urgency Level *</label>
+            <div class="urgency-indicator">
+              <div class="urgency-option urgency-low" data-urgency="Low">
+                <strong>Low</strong><br>
+                <small>Can wait a few days</small>
+              </div>
+              <div class="urgency-option urgency-medium" data-urgency="Medium">
+                <strong>Medium</strong><br>
+                <small>Need help this week</small>
+              </div>
+              <div class="urgency-option urgency-high" data-urgency="High">
+                <strong>High</strong><br>
+                <small>Need help ASAP</small>
+              </div>
+            </div>
+            <input type="hidden" id="urgency" name="urgency" required>
+          </div>
+
+          <div class="form-group">
+            <label for="budget">Estimated Budget Range</label>
+            <select id="budget" name="budget">
+              <option value="">Select budget range</option>
+              <option value="Under ₵200">Under ₵200</option>
+              <option value="₵200 - ₵500">₵200 - ₵500</option>
+              <option value="₵500 - ₵1000">₵500 - ₵1,000</option>
+              <option value="₵1000 - ₵2000">₵1,000 - ₵2,000</option>
+              <option value="Over ₵2000">Over ₵2,000</option>
+              <option value="Monthly Plan">Interested in monthly plan</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Step 4: Preferences & Review -->
+        <div class="form-step" id="form-step-4">
+          <h3>⚙️ Service Preferences</h3>
+          
+          <div class="form-group">
+            <label for="serviceType">Preferred Service Type</label>
+            <select id="serviceType" name="serviceType">
+              <option value="Remote">Remote Support (preferred)</option>
+              <option value="Onsite">On-site Visit (+₵50 trip fee in Accra)</option>
+              <option value="Either">Either option works</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="preferredTime">Preferred Contact Time</label>
+            <select id="preferredTime" name="preferredTime">
+              <option value="Morning">Morning (8am - 12pm)</option>
+              <option value="Afternoon">Afternoon (12pm - 5pm)</option>
+              <option value="Evening">Evening (5pm - 8pm)</option>
+              <option value="Anytime">Anytime</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="hearAboutUs">How did you hear about ShieldNest?</label>
+            <select id="hearAboutUs" name="hearAboutUs">
+              <option value="">Select an option</option>
+              <option value="Google Search">Google Search</option>
+              <option value="Social Media">Social Media</option>
+              <option value="Referral">Friend/Colleague Referral</option>
+              <option value="WhatsApp">WhatsApp</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="additionalNotes">Additional Notes/Questions</label>
+            <textarea id="additionalNotes" name="additionalNotes" rows="3" 
+                      placeholder="Any special requirements or questions?"></textarea>
+          </div>
+
+          <div style="background: rgba(56, 189, 248, 0.1); padding: 1.5rem; border-radius: 10px; margin-top: 2rem;">
+            <h4>📋 Request Summary</h4>
+            <div id="requestSummary"></div>
+          </div>
+        </div>
+
+        <div class="form-buttons">
+          <button type="button" class="btn btn-secondary" id="prevBtn" onclick="changeStep(-1)">Previous</button>
+          <button type="button" class="btn btn-primary" id="nextBtn" onclick="changeStep(1)">Next</button>
+          <button type="submit" class="btn btn-primary" id="submitBtn" style="display: none;">Submit Request 🚀</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <p>&copy; 2025 ShieldNest. All rights reserved. |
+      <a href="index.html">Home</a> |
+      <a href="about.html">About</a> |
+      <a href="services.html">Services</a> |
+      <a href="pricing.html">Pricing</a>
+    </p>
+  </footer>
+
+  <script>
+    let currentStep = 1;
+    const totalSteps = 4;
+
+    // Urgency selection
+    document.querySelectorAll('.urgency-option').forEach(option => {
+      option.addEventListener('click', function() {
+        document.querySelectorAll('.urgency-option').forEach(opt => opt.classList.remove('selected'));
+        this.classList.add('selected');
+        document.getElementById('urgency').value = this.dataset.urgency;
+      });
+    });
+
+    function changeStep(direction) {
+      if (direction === 1 && !validateCurrentStep()) {
+        return;
+      }
+
+      // Hide current step
+      document.getElementById(`form-step-${currentStep}`).classList.remove('active');
+      document.getElementById(`step-${currentStep}`).classList.remove('active');
+      document.getElementById(`step-${currentStep}`).classList.add('completed');
+
+      // Update step
+      currentStep += direction;
+
+      // Show new step
+      document.getElementById(`form-step-${currentStep}`).classList.add('active');
+      document.getElementById(`step-${currentStep}`).classList.add('active');
+
+      // Update buttons
+      updateButtons();
+
+      // Update summary on last step
+      if (currentStep === totalSteps) {
+        updateSummary();
+      }
+    }
+
+    function validateCurrentStep() {
+      const currentForm = document.getElementById(`form-step-${currentStep}`);
+      const requiredFields = currentForm.querySelectorAll('[required]');
+      
+      for (let field of requiredFields) {
+        if (!field.value.trim()) {
+          field.focus();
+          alert('Please fill in all required fields before continuing.');
+          return false;
+        }
+      }
+
+      if (currentStep === 2) {
+        const checkboxes = currentForm.querySelectorAll('input[type="checkbox"]:checked');
+        if (checkboxes.length === 0) {
+          alert('Please select at least one service.');
+          return false;
+        }
+      }
+
+      return true;
+    }
+
+    function updateButtons() {
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      const submitBtn = document.getElementById('submitBtn');
+
+      prevBtn.style.display = currentStep === 1 ? 'none' : 'block';
+      nextBtn.style.display = currentStep === totalSteps ? 'none' : 'block';
+      submitBtn.style.display = currentStep === totalSteps ? 'block' : 'none';
+    }
+
+    function updateSummary() {
+      const summary = document.getElementById('requestSummary');
+      const formData = new FormData(document.getElementById('serviceRequestForm'));
+      
+      const services = [];
+      for (let [key, value] of formData.entries()) {
+        if (key === 'services') {
+          services.push(value);
+        }
+      }
+
+      summary.innerHTML = `
+        <p><strong>Name:</strong> ${formData.get('fullName')}</p>
+        <p><strong>Email:</strong> ${formData.get('email')}</p>
+        <p><strong>Location:</strong> ${formData.get('location')}</p>
+        <p><strong>Services:</strong> ${services.join(', ')}</p>
+        <p><strong>Urgency:</strong> ${formData.get('urgency')}</p>
+        <p><strong>Budget:</strong> ${formData.get('budget') || 'Not specified'}</p>
+      `;
+    }
+
+    // Form submission
+    document.getElementById('serviceRequestForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      // Show loading state
+      document.getElementById('submitBtn').innerHTML = 'Sending Request... ⏳';
+      document.getElementById('submitBtn').disabled = true;
+
+      // Submit form
+      fetch(this.action, {
+        method: 'POST',
+        body: new FormData(this)
+      }).then(response => {
+        if (response.ok) {
+          alert('🎉 Your service request has been submitted successfully! We\'ll contact you within 24 hours.');
+          window.location.href = 'index.html';
+        } else {
+          throw new Error('Network response was not ok');
+        }
+      }).catch(error => {
+        alert('❌ There was an error submitting your request. Please try again or contact us directly via WhatsApp.');
+        document.getElementById('submitBtn').innerHTML = 'Submit Request 🚀';
+        document.getElementById('submitBtn').disabled = false;
+      });
+    });
+
+    // Initialize
+    updateButtons();
+  </script>
+</body>
+</html>

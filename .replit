@@ -1,0 +1,44 @@
+run = "static-web-server -w ./.config/static-web-server.toml > /dev/null 2>&1"
+
+[[workflows]]
+name = "Serve static"
+mode = "parallel"
+command = """echo "Serving HTML, open the Preview to see your output.
+To see changes you make, you can hit the refresh button in the preview, you do [1mnot[0m have to stop and run again.
+Console logs are available in the Preview devtools or your browser devtools." && static-web-server -w ./.config/static-web-server.toml > /dev/null 2>&1"""
+
+[[workflows]]
+name = "Configure Run Command"
+mode = "readonly"
+command = "printf 'Please use the \\e[1;93mConfiguration\\e[0m pane to configure your run command. For more info, see: https://docs.replit.com/replit-workspace/configuring-repl#run'"
+
+# Security Headers for Deployment
+[[deployment.responseHeaders]]
+path = "/*"
+name = "Content-Security-Policy"
+value = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' https: data:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://getform.io https://wa.me; frame-ancestors 'none'"
+
+[[deployment.responseHeaders]]
+path = "/*"
+name = "X-Frame-Options"
+value = "DENY"
+
+[[deployment.responseHeaders]]
+path = "/*"
+name = "X-Content-Type-Options"
+value = "nosniff"
+
+[[deployment.responseHeaders]]
+path = "/*"
+name = "Referrer-Policy"
+value = "strict-origin-when-cross-origin"
+
+[[deployment.responseHeaders]]
+path = "/*"
+name = "Permissions-Policy"
+value = "geolocation=(), microphone=(), camera=()"
+
+# Rewrite rules for SPA behavior
+[[deployment.rewrites]]
+from = "/*"
+to = "/shieldnest/index.html"

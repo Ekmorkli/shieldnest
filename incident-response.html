@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Incident Response Planner - ShieldNest</title>
+  <link rel="stylesheet" href="CSS/style.css" />
+  <link rel="stylesheet" href="CSS/chat.css" />
+  <link rel="stylesheet" href="CSS/whatsapp-integration.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+  <style>
+    body {
+      opacity: 0;
+      animation: fadeIn 0.6s ease-in-out forwards;
+    }
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+      }
+    }
+
+    .incident-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .incident-types {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+
+    .incident-card {
+      background: rgba(30, 41, 59, 0.8);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      border-radius: 15px;
+      padding: 1.5rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .incident-card:hover {
+      border-color: rgba(56, 189, 248, 0.4);
+      box-shadow: 0 10px 30px rgba(56, 189, 248, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .incident-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .incident-title {
+      color: #facc15;
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .incident-severity {
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
+      display: inline-block;
+    }
+
+    .severity-high {
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid #ef4444;
+      color: #fca5a5;
+    }
+
+    .severity-medium {
+      background: rgba(250, 204, 21, 0.2);
+      border: 1px solid #facc15;
+      color: #fde047;
+    }
+
+    .severity-low {
+      background: rgba(34, 197, 94, 0.2);
+      border: 1px solid #22c55e;
+      color: #86efac;
+    }
+
+    .response-plan {
+      display: none;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 15px;
+      padding: 2rem;
+      margin: 2rem 0;
+    }
+
+    .response-plan.active {
+      display: block;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .response-steps {
+      counter-reset: step-counter;
+    }
+
+    .response-step {
+      background: linear-gradient(145deg, rgba(30, 41, 59, 0.7), rgba(51, 65, 85, 0.6));
+      backdrop-filter: blur(10px);
+      border-left: 6px solid #38bdf8;
+      border-radius: 15px;
+      padding: 2rem;
+      margin: 2rem 0;
+      counter-increment: step-counter;
+      position: relative;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(56, 189, 248, 0.2);
+    }
+
+    .response-step:hover {
+      transform: translateX(10px);
+      border-left-color: #0ea5e9;
+      box-shadow: 0 10px 30px rgba(56, 189, 248, 0.2);
+      border-color: rgba(56, 189, 248, 0.4);
+    }
+
+    .response-step::before {
+      content: counter(step-counter);
+      position: absolute;
+      left: -25px;
+      top: 1.5rem;
+      background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+      color: #0f172a;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 1.1rem;
+      box-shadow: 0 4px 15px rgba(56, 189, 248, 0.3);
+      border: 2px solid rgba(15, 23, 42, 1);
+    }
+
+    .step-title {
+      color: #38bdf8;
+      font-size: 1.1rem;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
+
+    .step-time {
+      color: #facc15;
+      font-size: 0.9rem;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
+
+    .checklist {
+      list-style: none;
+      padding: 0;
+      margin: 1rem 0;
+    }
+
+    .checklist li::before {
+      content: "☐ ";
+      color: #38bdf8;
+      font-weight: bold;
+      margin-right: 0.8rem;
+      font-size: 1.2rem;
+      filter: drop-shadow(0 0 5px rgba(56, 189, 248, 0.5));
+    }
+
+    .checklist li {
+      padding: 0.8rem 0;
+      color: #e2e8f0;
+      transition: all 0.3s ease;
+      border-radius: 8px;
+      padding-left: 1rem;
+      margin: 0.5rem 0;
+    }
+
+    .checklist li:hover {
+      background: rgba(56, 189, 248, 0.1);
+      padding-left: 1.5rem;
+    }
+
+    .emergency-contacts {
+      background: linear-gradient(145deg, rgba(239, 68, 68, 0.15), rgba(220, 38, 38, 0.1));
+      backdrop-filter: blur(15px);
+      border: 2px solid rgba(239, 68, 68, 0.4);
+      border-radius: 20px;
+      padding: 2rem;
+      margin: 2rem 0;
+      box-shadow: 0 10px 30px rgba(239, 68, 68, 0.2);
+    }
+
+    .emergency-contacts h3 {
+      color: #fca5a5;
+      text-align: center;
+      margin-bottom: 1.5rem;
+      font-size: 1.3rem;
+    }
+
+    .contact-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      border-bottom: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 10px;
+      margin: 0.5rem 0;
+      background: rgba(15, 23, 42, 0.5);
+      transition: all 0.3s ease;
+    }
+
+    .contact-item:hover {
+      background: rgba(239, 68, 68, 0.1);
+      transform: translateX(5px);
+    }
+
+    .contact-item:last-child {
+      border-bottom: none;
+    }
+
+    .contact-item span:last-child {
+      color: #38bdf8;
+      font-weight: bold;
+      font-family: monospace;
+    }
+
+    .back-btn {
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.3), rgba(14, 165, 233, 0.2));
+      backdrop-filter: blur(10px);
+      border: 2px solid #38bdf8;
+      color: #38bdf8;
+      padding: 0.8rem 1.5rem;
+      border-radius: 15px;
+      cursor: pointer;
+      margin-bottom: 2rem;
+      display: inline-block;
+      transition: all 0.3s ease;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    .back-btn:hover {
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.4), rgba(14, 165, 233, 0.3));
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(56, 189, 248, 0.3);
+    }
+
+    /* Mobile-specific touch-friendly styles */
+    @media (max-width: 768px) {
+      .incident-card {
+        min-height: 200px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+      }
+
+      .incident-card:active {
+        transform: scale(0.98);
+      }
+
+      .back-btn {
+        position: sticky;
+        top: 20px;
+        z-index: 10;
+        margin-bottom: 1rem;
+      }
+
+      .checklist li {
+        cursor: pointer;
+        -webkit-tap-highlight-color: rgba(56, 189, 248, 0.2);
+      }
+
+      .checklist li:active {
+        background: rgba(56, 189, 248, 0.1);
+      }
+
+      .contact-item {
+        -webkit-tap-highlight-color: rgba(56, 189, 248, 0.2);
+      }
+
+      .contact-item:active {
+        transform: scale(0.98);
+      }
+
+      .response-step:hover {
+        transform: none;
+      }
+
+      .response-step:active {
+        transform: scale(0.99);
+      }
+
+      .emergency-contacts h3 {
+        font-size: 1.1rem;
+      }
+
+      .contact-item span:last-child {
+        font-size: 0.9rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .incident-container {
+        padding: 1rem;
+      }
+
+      .incident-types {
+        gap: 1rem;
+      }
+
+      .incident-card {
+        padding: 1rem;
+      }
+
+      .response-plan {
+        padding: 1rem;
+      }
+
+      .response-step {
+        padding: 1rem;
+        margin: 1rem 0;
+      }
+
+      .emergency-contacts {
+        padding: 1rem;
+      }
+
+      .contact-item {
+        padding: 0.8rem;
+        font-size: 0.9rem;
+      }
+
+      .contact-cta {
+        padding: 1.5rem;
+        margin-top: 2rem;
+      }
+
+      .contact-cta h3 {
+        font-size: 1.2rem;
+      }
+
+      .contact-cta p {
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+      <div class="logo">🛡️ ShieldNest</div>
+      <button class="mobile-menu-btn" aria-label="Toggle mobile menu" aria-expanded="false">☰</button>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="services.html">Services</a></li>
+        <li><a href="pricing.html">Pricing</a></li>
+        <li><a href="tools.html">Tools</a></li>
+        <li><a href="compliance-checker.html">Compliance</a></li>
+        <li><a href="incident-response.html">Emergency</a></li>
+        <li><a href="blog.html">Blog</a></li>
+        <li><a href="index.html#contact">Contact</a></li>
+        <li><a href="https://wa.me/233539985980" target="_blank">WhatsApp Us</a></li>
+      </ul>
+    </nav>
+
+  <section class="hero" style="padding: 4rem 2rem; text-align: center; background: linear-gradient(135deg, rgba(59, 130, 246, 0.85) 0%, rgba(29, 78, 216, 0.9) 50%, rgba(14, 165, 233, 0.85) 100%), url('https://images.unsplash.com/photo-1563986768494-4dee2763ff3f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;">
+    <h1>🚨 Cybersecurity Incident Response</h1>
+    <p>Step-by-step emergency response guides for common cybersecurity incidents. Follow these procedures to minimize damage and recover quickly.</p>
+    <div style="background: rgba(220, 38, 38, 0.1); border: 1px solid rgba(220, 38, 38, 0.3); border-radius: 10px; padding: 1rem; margin: 2rem auto; max-width: 600px;">
+      <p style="color: #dc2626; font-weight: bold; margin: 0;">⚠️ If you're experiencing an active cyber attack, contact us immediately: <a href="tel:+233539985980" style="color: #dc2626;">+233 53 998 5980</a></p>
+    </div>
+  </section>
+
+  <div class="incident-container">
+    <div class="compliance-header">
+      <h1>🚨 Cybersecurity Incident Response Planner</h1>
+      <p>Step-by-step guides for handling security incidents in Ghana businesses</p>
+    </div>
+
+    <div id="incident-selector">
+      <div class="incident-types">
+        <div class="incident-card" onclick="showResponsePlan('data-breach')">
+          <div class="incident-icon">🔓</div>
+          <div class="incident-title">Data Breach</div>
+          <span class="incident-severity severity-high">HIGH SEVERITY</span>
+          <p>Unauthorized access to personal or sensitive business data</p>
+        </div>
+
+        <div class="incident-card" onclick="showResponsePlan('ransomware')">
+          <div class="incident-icon">🔒</div>
+          <div class="incident-title">Ransomware Attack</div>
+          <span class="incident-severity severity-high">HIGH SEVERITY</span>
+          <p>Files encrypted by malicious software demanding payment</p>
+        </div>
+
+        <div class="incident-card" onclick="showResponsePlan('phishing')">
+          <div class="incident-icon">🎣</div>
+          <div class="incident-title">Phishing Attack</div>
+          <span class="incident-severity severity-medium">MEDIUM SEVERITY</span>
+          <p>Fraudulent emails or messages attempting to steal credentials</p>
+        </div>
+
+        <div class="incident-card" onclick="showResponsePlan('malware')">
+          <div class="incident-icon">🦠</div>
+          <div class="incident-title">Malware Infection</div>
+          <span class="incident-severity severity-medium">MEDIUM SEVERITY</span>
+          <p>Virus, trojan, or other malicious software on systems</p>
+        </div>
+
+        <div class="incident-card" onclick="showResponsePlan('unauthorized-access')">
+          <div class="incident-icon">🚪</div>
+          <div class="incident-title">Unauthorized Access</div>
+          <span class="incident-severity severity-high">HIGH SEVERITY</span>
+          <p>Suspicious login attempts or compromised user accounts</p>
+        </div>
+
+        <div class="incident-card" onclick="showResponsePlan('ddos')">
+          <div class="incident-icon">⚡</div>
+          <div class="incident-title">DDoS Attack</div>
+          <span class="incident-severity severity-medium">MEDIUM SEVERITY</span>
+          <p>Website or service overwhelmed by traffic</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Data Breach Response Plan -->
+    <div id="data-breach-plan" class="response-plan">
+      <a class="back-btn" onclick="hideResponsePlan()" href="#">← Back to Incident Types</a>
+      <h2>🔓 Data Breach Response Plan</h2>
+
+      <div class="emergency-contacts">
+        <h3>🚨 Emergency Contacts</h3>
+        <div class="contact-item">
+          <span>Ghana Data Protection Commission</span>
+          <span>+233 302 909 902</span>
+        </div>
+        <div class="contact-item">
+          <span>ShieldNest Emergency Response</span>
+          <span>+233 539 985 980</span>
+        </div>
+        <div class="contact-item">
+          <span>Ghana Police Cyber Crime Unit</span>
+          <span>191 / +233 302 773 906</span>
+        </div>
+      </div>
+
+      <div class="response-steps">
+        <div class="response-step">
+          <div class="step-title">Immediate Containment</div>
+          <div class="step-time">⏱️ Within 1 Hour</div>
+          <p>Isolate affected systems to prevent further damage</p>
+          <ul class="checklist">
+            <li>Disconnect affected devices from the network</li>
+            <li>Change passwords for all potentially compromised accounts</li>
+            <li>Disable remote access capabilities</li>
+            <li>Preserve evidence - do not delete logs or files</li>
+          </ul>
+        </div>
+
+        <div class="response-step">
+          <div class="step-title">Assessment & Documentation</div>
+          <div class="step-time">⏱️ Within 6 Hours</div>
+          <p>Determine the scope and impact of the breach</p>
+          <ul class="checklist">
+            <li>Identify what data was accessed or stolen</li>
+            <li>Document the timeline of the incident</li>
+            <li>Determine how the breach occurred</li>
+            <li>Assess the number of affected individuals</li>
+            <li>Take screenshots and preserve system logs</li>
+          </ul>
+        </div>
+
+        <div class="response-step">
+          <div class="step-title">Legal Notification</div>
+          <div class="step-time">⏱️ Within 72 Hours</div>
+          <p>Report to authorities as required by Ghana's Data Protection Act</p>
+          <ul class="checklist">
+            <li>Notify Ghana Data Protection Commission</li>
+            <li>Contact law enforcement if criminal activity suspected</li>
+            <li>Inform affected customers if their personal data was compromised</li>
+            <li>Prepare breach notification letters</li>
+          </ul>
+        </div>
+
+        <div class="response-step">
+          <div class="step-title">Recovery & Prevention</div>
+          <div class="step-time">⏱️ Ongoing</div>
+          <p>Restore operations and strengthen security</p>
+          <ul class="checklist">
+            <li>Patch security vulnerabilities that caused the breach</li>
+            <li>Restore systems from clean backups</li>
+            <li>Implement additional security controls</li>
+            <li>Train staff on updated security procedures</li>
+            <li>Conduct regular security audits</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ransomware Response Plan -->
+    <div id="ransomware-plan" class="response-plan">
+      <a class="back-btn" onclick="hideResponsePlan()"  href="#">← Back to Incident Types</a>
+      <h2>🔒 Ransomware Response Plan</h2>
+
+      <div class="emergency-contacts">
+        <h3>🚨 Emergency Contacts</h3>
+        <div class="contact-item">
+          <span>ShieldNest Emergency Response</span>
+          <span>+233 539 985 980</span>
+        </div>
+        <div class="contact-item">
+          <span>Ghana Police Cyber Crime Unit</span>
+          <span>191</span>
+        </div>
+      </div>
+
+      <div class="response-steps">
+        <div class="response-step">
+          <div class="step-title">Immediate Isolation</div>
+          <div class="step-time">⏱️ Immediately</div>
+          <p>Stop the ransomware from spreading</p>
+          <ul class="checklist">
+            <li>Disconnect infected devices from network immediately</li>
+            <li>Power off affected systems (do not shut down normally)</li>
+            <li>Isolate network segments</li>
+            <li>Do NOT pay the ransom - contact authorities first</li>
+          </ul>
+        </div>
+
+        <div class="response-step">
+          <div class="step-title">Damage Assessment</div>
+          <div class="step-time">⏱️ Within 2 Hours</div>
+          <p>Determine what files and systems are affected</p>
+          <ul class="checklist">
+            <li>Identify the ransomware variant if possible</li>
+            <li>Check which files are encrypted</li>
+            <li>Verify backup integrity</li>
+            <li>Document all affected systems</li>
+          </ul>
+        </div>
+
+        <div class="response-step">
+          <div class="step-title">Recovery Planning</div>
+          <div class="step-time">⏱️ Within 24 Hours</div>
+          <p>Plan system restoration from backups</p>
+          <ul class="checklist">
+            <li>Verify backup files are clean and uncorrupted</li>
+            <li>Plan restoration order (critical systems first)</li>
+            <li>Prepare new, clean systems for restoration</li>
+            <li>Update all security software and patches</li>
+          </ul>
+        </div>
+
+        <div class="response-step">
+          <div class="step-title">System Restoration</div>
+          <div class="step-time">⏱️ Ongoing</div>
+          <p>Restore operations from clean backups</p>
+          <ul class="checklist">
+            <li>Wipe infected systems completely</li>
+            <li>Restore from verified clean backups</li>
+            <li>Implement stronger security measures</li>
+            <li>Monitor for signs of reinfection</li>
+            <li>Update incident response procedures</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phishing Response Plan -->
+    <div id="phishing-plan" class="response-plan">
+      <a class="back-btn" onclick="hideResponsePlan()" href="#">← Back to Incident Types</a>
+      <h2>🎣 Phishing Attack Response Plan</h2>
+
+      <div class="response-steps">
+        <div class="response-step">
+          <div class="step-title">Immediate Action</div>
+          <div class="step-time">⏱️ Immediately</div>
+          <p>Secure potentially compromised accounts</p>
+          <ul class="checklist">
+            <li>Change passwords for any accounts that may be compromised</li>
+            <li>Enable two-factor authentication if not already active</li>
+            <li>Check for unauthorized access in account logs</li>
+            <li>Report the phishing email to your IT team</li>
+          </ul>
+        </div>
+
+        <div class="response-step">
+          <div class="step-title">Investigation</div>
+          <div class="step-time">⏱️ Within 2 Hours</div>
+          <p>Determine the scope of the attack</p>
+          <ul class="checklist">
+            <li>Identify who else received the phishing email</li>
+            <li>Check if anyone clicked links or provided information</li>
+            <li>Analyze the email headers and content</li>
+            <li>Document all evidence</li>
+          </ul>
+        </div>
+
+        <div class="response-step">
+          <div class="step-title">Communication</div>
+          <div class="step-time">⏱️ Within 4 Hours</div>
+          <p>Alert staff and stakeholders</p>
+          <ul class="checklist">
+            <li>Send company-wide warning about the phishing attempt</li>
+            <li>Provide clear instructions on what not to click</li>
+            <li>Update email filters to block similar messages</li>
+            <li>Contact customers if their data may be at risk</li>
+          </ul>
+        </div>
+
+        <div class="response-step">
+          <div class="step-title">Prevention</div>
+          <div class="step-time">⏱️ Ongoing</div>
+          <p>Strengthen defenses against future attacks</p>
+          <ul class="checklist">
+            <li>Conduct phishing awareness training for all staff</li>
+            <li>Implement advanced email security filters</li>
+            <li>Regular simulated phishing tests</li>
+            <li>Update security policies and procedures</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Malware Response Plan -->
+    <div id="malware-plan" class="response-plan">
+      <a   class="back-btn" onclick="hideResponsePlan()" href="#">← Back to Incident Types</a>
+      <h2>🦠 Malware Infection Response Plan</h2>
+
+      <div class="response-steps">
+        <div class="response-step">
+          <div class="step-title">Immediate Isolation</div>
+          <div class="step-time">⏱️ Immediately</div>
+          <p>Prevent malware from spreading to other systems</p>
+          <ul class="checklist">
+            <li>Disconnect infected device from network</li>
+            <li>Do not shut down the computer normally</li>
+            <li>Take photos of any error messages or suspicious activity</li>
+            <li>Alert other users not to open suspicious files</li>
+          </ul>
+        </div>
+
+        <div class="response-step">
+          <div class="step-title">Malware Analysis</div>
+          <div class="step-time">⏱️ Within 1 Hour</div>
+          <p>Identify the type and scope of malware infection</p>
+          <ul class="checklist">
+            <li>Run antivirus scan in safe mode</li>
+            <li>Check system logs for suspicious activity</li>
+            <li>Identify what files or systems are affected</li>
+            <li>Document malware behavior and symptoms</li>
+          </ul>
+        </div>
+
+        <div class="response-step">
+          <div class="step-title">Malware Removal</div>
+          <div class="step-time">⏱️ Within 4 Hours</div>
+          <p>Clean the infected systems</p>
+          <ul class="checklist">
+            <li>Use updated antivirus software for deep scan</li>
+            <li>Run anti-malware tools like Malwarebytes</li>
+            <li>Remove suspicious programs and files</li>
+            <li>Check browser settings for unwanted changes</li>
+            <li>Update all software and security patches</li>
+          </ul>
+        </div>
+
+        <div class="response-step">
+          <div class="step-title">System Recovery</div>
+          <div class="step-time">⏱️ Ongoing</div>
+          <p>Restore full system functionality</p>
+          <ul class="checklist">
+            <li>Restore important files from clean backups</li>
+            <li>Reset all passwords that may be compromised</li>
+            <li>Monitor system performance for unusual activity</li>
+            <li>Install additional security software</li>
+            <li>Train users on safe computing practices</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Unauthorized Access Response Plan -->
+    <div id="unauthorized-access-plan" class="response-plan">
+      <a class="back-btn" onclick="hideResponsePlan()" href="#">← Back to Incident Types</a>
+      <h2>🚪 Unauthorized Access Response Plan</h2>
+
+      <div class="emergency-contacts">
+        <h3>🚨 Emergency Contacts</h3>
+        <div class="contact-item">
+          <span>ShieldNest Emergency Response</span>
+          <span>+233 539 985 980</span>
+        </div>
+        <div class="contact-item">
+          <span>Ghana Police Cyber Crime Unit</span>
+          <span>191</span>
+        </div>
+      </div>
+
+      <div class="response-steps">
+        <div class="response-step">
+          <div class="step-title">Immediate Lockdown</div>
+          <div class="step-time">⏱️ Immediately</div>
+          <p>Secure all potentially compromised accounts</p>
+          <ul class="checklist">
+            <li>Change passwords for all affected accounts immediately</li>
+            <li>Enable two-factor authentication where possible</li>
+            <li>Log out all active sessions</li>
+            <li>Disable remote access temporarily</li>
+            <li>Contact your bank if financial accounts are involved</li>
+          </ul>
+        </div>
+
+        <div class="response-step">
+          <div class="step-title">Investigation</div>
+          <div class="step-time">⏱️ Within 2 Hours</div>
+          <p>Determine how the breach occurred</p>
+          <ul class="checklist">
+            <li>Review login logs for suspicious activity</li>
+            <li>Check for unusual file access or changes</li>
+            <li>Identify the source of unauthorized access</li>
+            <li>Document all evidence of the breach</li>
+            <li>Determine what information was accessed</li>
+          </ul>
+        </div>
+
+        <div class="response-step">
+          <div class="step-title">System Hardening</div>
+          <div class="step-time">⏱️ Within 6 Hours</div>
+          <p>Strengthen security to prevent future breaches</p>
+          <ul class="checklist">
+            <li>Update all software and security patches</li>
+            <li>Review and strengthen firewall rules</li>
+            <li>Implement stronger password policies</li>
+            <li>Add monitoring for suspicious login attempts</li>
+            <li>Conduct security audit of all systems</li>
+          </ul>
+        </div>
+
+        <div class="response-step">
+          <div class="step-title">Monitoring & Prevention</div>
+          <div class="step-time">⏱️ Ongoing</div>
+          <p>Continuous monitoring and improvement</p>
+          <ul class="checklist">
+            <li>Set up alerts for unusual account activity</li>
+            <li>Regular review of access logs</li>
+            <li>Employee training on security best practices</li>
+            <li>Implement principle of least privilege</li>
+            <li>Regular security assessments</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- DDoS Attack Response Plan -->
+    <div id="ddos-plan" class="response-plan">
+      <a class="back-btn" onclick="hideResponsePlan()" href="#">← Back to Incident Types</a>
+      <h2>⚡ DDoS Attack Response Plan</h2>
+
+      <div class="response-steps">
+        <div class="response-step">
+          <div class="step-title">Attack Confirmation</div>
+          <div class="step-time">⏱️ Within 15 Minutes</div>
+          <p>Verify that you're experiencing a DDoS attack</p>
+          <ul class="checklist">
+            <li>Check website performance and accessibility</li>
+            <li>Monitor server resource usage (CPU, bandwidth)</li>
+            <li>Review traffic logs for unusual patterns</li>
+            <li>Test site access from different locations</li>
+            <li>Contact hosting provider to confirm attack</li>
+          </ul>
+        </div>
+
+        <div class="response-step">
+          <div class="step-title">Traffic Analysis</div>
+          <div class="step-time">⏱️ Within 30 Minutes</div>
+          <p>Understand the nature of the attack</p>
+          <ul class="checklist">
+            <li>Identify attack vectors and source IPs</li>
+            <li>Determine attack type (volumetric, protocol, application)</li>
+            <li>Assess which services are most affected</li>
+            <li>Document attack characteristics for mitigation</li>
+          </ul>
+        </div>
+
+        <div class="response-step">
+          <div class="step-title">Mitigation Measures</div>
+          <div class="step-time">⏱️ Within 1 Hour</div>
+          <p>Implement protective measures</p>
+          <ul class="checklist">
+            <li>Enable DDoS protection from hosting provider</li>
+            <li>Block malicious IP addresses at firewall level</li>
+            <li>Reduce server load by disabling non-essential services</li>
+            <li>Implement rate limiting on web server</li>
+            <li>Consider using content delivery network (CDN)</li>
+          </ul>
+        </div>
+
+        <div class="response-step">
+          <div class="step-title">Recovery & Strengthening</div>
+          <div class="step-time">⏱️ Ongoing</div>
+          <p>Restore full service and prevent future attacks</p>
+          <ul class="checklist">
+            <li>Gradually restore all services once attack subsides</li>
+            <li>Monitor traffic patterns for signs of continued attack</li>
+            <li>Implement permanent DDoS protection solutions</li>
+            <li>Create DDoS response playbook for future incidents</li>
+            <li>Review and upgrade hosting infrastructure if needed</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="contact-cta" style="text-align: center; margin-top: 3rem; padding: 2rem; background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(250, 204, 21, 0.1)); border-radius: 15px;">
+      <h3>🛡️ Need Emergency Incident Response?</h3>
+      <p>Our cybersecurity experts are available 24/7 to help you respond to security incidents</p>
+      <a href="https://wa.me/233539985980" class="btn-primary" style="display: inline-block; margin-top: 1rem;">
+        📞 Emergency Response Hotline
+      </a>
+    </div>
+  </div>
+  <footer class="site-footer">
+    <p>&copy; 2025 ShieldNest. All rights reserved. |
+      <a href="index.html">Home</a> |
+      <a href="services.html">Services</a> |
+      <a href="pricing.html">Pricing</a>
+    </p>
+  </footer>
+
+  <script src="js/incident-response.js"></script>
+</body>
+</html>

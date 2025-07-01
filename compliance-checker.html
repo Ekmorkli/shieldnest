@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ghana Compliance Checker - ShieldNest</title>
+  <link rel="stylesheet" href="CSS/style.css" />
+  <link rel="stylesheet" href="CSS/chat.css" />
+  <link rel="stylesheet" href="CSS/whatsapp-integration.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+  <style>
+    body {
+      opacity: 0;
+      animation: fadeIn 0.6s ease-in-out forwards;
+    }
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+      }
+    }
+
+    .compliance-container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .compliance-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .compliance-section {
+      background: rgba(30, 41, 59, 0.8);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      border-radius: 20px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      transition: all 0.3s ease;
+    }
+
+    .compliance-section:hover {
+      border-color: rgba(56, 189, 248, 0.4);
+      box-shadow: 0 10px 30px rgba(56, 189, 248, 0.1);
+    }
+
+    .section-title {
+      color: #facc15;
+      font-size: 1.4rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .question-group {
+      margin: 1.5rem 0;
+    }
+
+    .question {
+      color: #e2e8f0;
+      margin-bottom: 0.8rem;
+      font-weight: 500;
+    }
+
+    .question-options {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .option-btn {
+      padding: 0.5rem 1rem;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      background: rgba(15, 23, 42, 0.8);
+      color: #e2e8f0;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .option-btn:hover {
+      border-color: #38bdf8;
+      background: rgba(56, 189, 248, 0.1);
+    }
+
+    .option-btn.selected {
+      background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+      color: #0f172a;
+      border-color: #38bdf8;
+    }
+
+    .compliance-score {
+      text-align: center;
+      padding: 2rem;
+      margin: 2rem 0;
+      background: rgba(30, 41, 59, 0.9);
+      border-radius: 15px;
+      border: 2px solid;
+    }
+
+    .score-excellent {
+      border-color: #22c55e;
+      background: rgba(34, 197, 94, 0.1);
+    }
+
+    .score-good {
+      border-color: #facc15;
+      background: rgba(250, 204, 21, 0.1);
+    }
+
+    .score-poor {
+      border-color: #ef4444;
+      background: rgba(239, 68, 68, 0.1);
+    }
+
+    .score-display {
+      font-size: 3rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
+    }
+
+    .recommendations {
+      margin-top: 2rem;
+    }
+
+    .recommendation-item {
+      background: rgba(15, 23, 42, 0.8);
+      border-left: 4px solid #38bdf8;
+      padding: 1rem;
+      margin: 1rem 0;
+      border-radius: 8px;
+    }
+
+    .priority-high {
+      border-left-color: #ef4444;
+    }
+
+    .priority-medium {
+      border-left-color: #facc15;
+    }
+
+    .priority-low {
+      border-left-color: #22c55e;
+    }
+
+    .calculate-btn {
+      background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+      color: #0f172a;
+      padding: 1rem 2rem;
+      border: none;
+      border-radius: 50px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 1.1rem;
+      transition: all 0.3s ease;
+      display: block;
+      margin: 2rem auto;
+    }
+
+    .calculate-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(56, 189, 248, 0.3);
+    }
+
+    .law-reference {
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 1rem;
+      border-radius: 10px;
+      margin: 1rem 0;
+      font-size: 0.9rem;
+      color: #cbd5e1;
+    }
+
+    .contact-cta {
+      text-align: center;
+      margin-top: 3rem;
+      padding: 2rem;
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(250, 204, 21, 0.1));
+      border-radius: 15px;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+      <div class="logo">🛡️ ShieldNest</div>
+      <button class="mobile-menu-btn" aria-label="Toggle mobile menu" aria-expanded="false">☰</button>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="services.html">Services</a></li>
+        <li><a href="pricing.html">Pricing</a></li>
+        <li><a href="tools.html">Tools</a></li>
+        <li><a href="compliance-checker.html">Compliance</a></li>
+        <li><a href="incident-response.html">Emergency</a></li>
+        <li><a href="blog.html">Blog</a></li>
+        <li><a href="index.html#contact">Contact</a></li>
+        <li><a href="https://wa.me/233539985980" target="_blank">WhatsApp Us</a></li>
+      </ul>
+    </nav>
+
+  <section class="hero compliance-header" style="padding: 4rem 2rem; text-align: center; background: linear-gradient(135deg, rgba(59, 130, 246, 0.85) 0%, rgba(29, 78, 216, 0.9) 50%, rgba(14, 165, 233, 0.85) 100%), url('https://images.unsplash.com/photo-1450101499163-c8848c66ca85?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;">
+    <h1>📋 Ghana Data Protection Act Compliance Checker</h1>
+    <p>Assess your business's compliance with Ghana's Data Protection Act 2012 and international cybersecurity standards. This free tool helps identify areas for improvement in your data protection practices.</p>
+  </section>
+
+  <div class="compliance-container">
+    <div class="compliance-header">
+      <h1>🏛️ Ghana Data Protection Compliance Checker</h1>
+      <p>Assess your business compliance with Ghana's Data Protection Act (2012) and GDPR requirements</p>
+    </div>
+
+    <form id="complianceForm">
+      <!-- Data Protection Basics -->
+      <div class="compliance-section">
+        <h3 class="section-title">🔐 Data Protection Fundamentals</h3>
+
+        <div class="question-group">
+          <div class="question">1. Do you collect personal data from customers/employees?</div>
+          <div class="question-options">
+            <button type="button" class="option-btn" data-question="q1" data-value="yes">Yes</button>
+            <button type="button" class="option-btn" data-question="q1" data-value="no">No</button>
+            <button type="button" class="option-btn" data-question="q1" data-value="unsure">Unsure</button>
+          </div>
+        </div>
+
+        <div class="question-group">
+          <div class="question">2. Do you have a written data protection policy?</div>
+          <div class="question-options">
+            <button type="button" class="option-btn" data-question="q2" data-value="yes">Yes</button>
+            <button type="button" class="option-btn" data-question="q2" data-value="no">No</button>
+            <button type="button" class="option-btn" data-question="q2" data-value="draft">In Draft</button>
+          </div>
+        </div>
+
+        <div class="question-group">
+          <div class="question">3. Do you inform customers how their data will be used?</div>
+          <div class="question-options">
+            <button type="button" class="option-btn" data-question="q3" data-value="always">Always</button>
+            <button type="button" class="option-btn" data-question="q3" data-value="sometimes">Sometimes</button>
+            <button type="button" class="option-btn" data-question="q3" data-value="never">Never</button>
+          </div>
+        </div>
+
+        <div class="law-reference">
+          <strong>Legal Reference:</strong> Ghana Data Protection Act (2012) Section 25 requires explicit consent for data collection and processing.
+        </div>
+      </div>
+
+      <!-- Data Security -->
+      <div class="compliance-section">
+        <h3 class="section-title">🔒 Data Security Measures</h3>
+
+        <div class="question-group">
+          <div class="question">4. How do you store customer data?</div>
+          <div class="question-options">
+            <button type="button" class="option-btn" data-question="q4" data-value="encrypted">Encrypted Database</button>
+            <button type="button" class="option-btn" data-question="q4" data-value="basic">Basic Database</button>
+            <button type="button" class="option-btn" data-question="q4" data-value="files">Excel/Paper Files</button>
+          </div>
+        </div>
+
+        <div class="question-group">
+          <div class="question">5. Do you have regular data backups?</div>
+          <div class="question-options">
+            <button type="button" class="option-btn" data-question="q5" data-value="automated">Automated Daily</button>
+            <button type="button" class="option-btn" data-question="q5" data-value="manual">Manual Weekly</button>
+            <button type="button" class="option-btn" data-question="q5" data-value="none">No Backups</button>
+          </div>
+        </div>
+
+        <div class="question-group">
+          <div class="question">6. Who has access to customer data?</div>
+          <div class="question-options">
+            <button type="button" class="option-btn" data-question="q6" data-value="limited">Limited Staff Only</button>
+            <button type="button" class="option-btn" data-question="q6" data-value="multiple">Multiple Employees</button>
+            <button type="button" class="option-btn" data-question="q6" data-value="everyone">Everyone</button>
+          </div>
+        </div>
+
+        <div class="law-reference">
+          <strong>Legal Reference:</strong> Section 28 mandates appropriate technical and organizational measures to protect personal data.
+        </div>
+      </div>
+
+      <!-- Data Rights -->
+      <div class="compliance-section">
+        <h3 class="section-title">👥 Customer Data Rights</h3>
+
+        <div class="question-group">
+          <div class="question">7. Can customers request to see their data?</div>
+          <div class="question-options">
+            <button type="button" class="option-btn" data-question="q7" data-value="yes">Yes, Written Process</button>
+            <button type="button" class="option-btn" data-question="q7" data-value="informal">Yes, Informally</button>
+            <button type="button" class="option-btn" data-question="q7" data-value="no">No Process</button>
+          </div>
+        </div>
+
+        <div class="question-group">
+          <div class="question">8. Can customers delete their data?</div>
+          <div class="question-options">
+            <button type="button" class="option-btn" data-question="q8" data-value="yes">Yes, Easy Process</button>
+            <button type="button" class="option-btn" data-question="q8" data-value="complex">Yes, Complex Process</button>
+            <button type="button" class="option-btn" data-question="q8" data-value="no">No</button>
+          </div>
+        </div>
+
+        <div class="law-reference">
+          <strong>Legal Reference:</strong> Section 31 grants individuals rights to access, correct, and delete their personal data.
+        </div>
+      </div>
+
+      <!-- Breach Response -->
+      <div class="compliance-section">
+        <h3 class="section-title">🚨 Data Breach Preparedness</h3>
+
+        <div class="question-group">
+          <div class="question">9. Do you have a data breach response plan?</div>
+          <div class="question-options">
+            <button type="button" class="option-btn" data-question="q9" data-value="comprehensive">Comprehensive Plan</button>
+            <button type="button" class="option-btn" data-question="q9" data-value="basic">Basic Plan</button>
+            <button type="button" class="option-btn" data-question="q9" data-value="none">No Plan</button>
+          </div>
+        </div>
+
+        <div class="question-group">
+          <div class="question">10. Would you know how to report a data breach?</div>
+          <div class="question-options">
+            <button type="button" class="option-btn" data-question="q10" data-value="yes">Yes, Clear Process</button>
+            <button type="button" class="option-btn" data-question="q10" data-value="maybe">Probably</button>
+            <button type="button" class="option-btn" data-question="q10" data-value="no">No Idea</button>
+          </div>
+        </div>
+
+        <div class="law-reference">
+          <strong>Legal Reference:</strong> Section 35 requires notification to the Data Protection Commission within 72 hours of discovering a breach.
+        </div>
+      </div>
+
+      <button type="button" class="calculate-btn" onclick="calculateCompliance()">
+        📊 Calculate My Compliance Score
+      </button>
+    </form>
+
+    <div id="complianceResults" style="display: none;">
+      <div id="scoreDisplay" class="compliance-score">
+        <div class="score-display" id="scoreNumber">0%</div>
+        <div id="scoreText">Calculating...</div>
+      </div>
+
+      <div class="recommendations" id="recommendationsList">
+        <!-- Recommendations will be populated by JavaScript -->
+      </div>
+
+      <div class="contact-cta">
+        <h3>🛡️ Need Help Achieving Compliance?</h3>
+        <p>Our cybersecurity experts can help you implement proper data protection measures and achieve full compliance with Ghana's laws.</p>
+        <a href="https://wa.me/233559985980" class="btn-primary" style="display: inline-block; margin-top: 1rem;">
+          📞 Get Compliance Consultation
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <p>&copy; 2025 ShieldNest. All rights reserved. |
+      <a href="index.html">Home</a> |
+      <a href="about.html">About</a> |
+      <a href="services.html">Services</a> |
+      <a href="pricing.html">Pricing</a>
+    </p>
+  </footer>
+
+  <div id="stickyCTA">
+    <a href="https://wa.me/233539985980" target="_blank">💬 Compliance Help</a>
+  </div>
+
+  <script src="js/compliance.js"></script>
+  <script src="js/chat.js"></script>
+  <script src="js/whatsapp-integration.js"></script>
+</body>
+</html>
