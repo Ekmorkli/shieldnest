@@ -199,6 +199,7 @@ body {
         opacity: 1;
         visibility: visible;
         pointer-events: auto; /* Allow interaction when open */
+        overflow-y: auto;
     }
 
     .navbar ul li {
