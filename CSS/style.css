@@ -194,7 +194,7 @@ body {
 
     .navbar ul.mobile-active {
         /* Active state: displayed and expanded */
-        max-height: 500px; /* Adjust as needed to comfortably fit all menu items */
+        max-height: 200vh; /* Adjust as needed to comfortably fit all menu items */
         padding: 1rem 0; /* Add vertical padding when open */
         opacity: 1;
         visibility: visible;
